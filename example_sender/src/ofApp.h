@@ -28,9 +28,9 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	shared_ptr<shmdata::ConsoleLogger> logger;
-	shared_ptr<shmdata::Writer> w;
-	shared_ptr<shmdata::Reader> r;
+	unique_ptr<shmdata::ConsoleLogger> logger;
+	unique_ptr<shmdata::Writer> w;
+	unique_ptr<shmdata::Reader> r;
 
 	ofEasyCam cam;
 
