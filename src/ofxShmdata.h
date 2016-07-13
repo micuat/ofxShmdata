@@ -19,4 +19,6 @@ namespace ofxShmdata {
         string formatType,
         int aspectRatioW = 1,
         int aspectRatioH = 1);
+
+    void writeScreenToBuffer(ofBufferObject&);
 }

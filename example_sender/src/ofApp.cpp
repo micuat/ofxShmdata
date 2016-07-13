@@ -42,18 +42,8 @@ void ofApp::draw(){
     cam.end();
 
     {
-        int sh = ofGetGLRenderer()->getViewportHeight();
-        int x = 0, y = 0;
-    	ofBufferObject buffer;
-    	buffer.allocate(frameSize, GL_STATIC_READ);
-    	if(ofGetGLRenderer()->isVFlipped()){
-    		y = sh - y;
-    		y -= frameHeight; // top, bottom issues
-    	}
-
-    	buffer.bind(GL_PIXEL_PACK_BUFFER);
-    	glReadPixels(x, y, frameWidth, frameHeight, GL_RGB, GL_UNSIGNED_BYTE, 0); // read the memory....
-    	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+        ofBufferObject buffer;
+        ofxShmdata::writeScreenToBuffer(buffer);
     	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
         w->copy_to_shm(p, frameSize);
 

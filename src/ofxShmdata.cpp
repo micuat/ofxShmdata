@@ -39,4 +39,20 @@ namespace ofxShmdata {
             "pixel-aspect-ratio=(fraction)" +
             ofToString(aspectRatioW) + "/" + ofToString(aspectRatioH);
     }
+
+    void writeScreenToBuffer(ofBufferObject& buffer)
+    {
+        int numChannels = 3;
+        int x = 0, y = 0;
+    	buffer.allocate(ofGetWidth() * ofGetHeight() * numChannels, GL_STATIC_READ);
+        // int sh = ofGetGLRenderer()->getViewportHeight();
+    	// if(ofGetGLRenderer()->isVFlipped()){
+    	// 	y = sh - y;
+    	// 	y -= ofGetHeight(); // top, bottom issues
+    	// }
+
+    	buffer.bind(GL_PIXEL_PACK_BUFFER);
+    	glReadPixels(x, y, ofGetWidth(), ofGetHeight(), GL_RGB, GL_UNSIGNED_BYTE, 0);
+    	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+    }
 }
