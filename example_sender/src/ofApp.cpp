@@ -10,7 +10,7 @@ void ofApp::setup(){
     // direct access writer with one reader
     w = make_unique<Writer>("/tmp/ofxShmdata-example",
          ofGetWidth() * ofGetHeight() * 3,
-         ofxShmdata::generateVideoMetadata(ofGetWidth(), ofGetHeight(), 30),
+         ofxShmdata::generateVideoDescriptor(ofGetWidth(), ofGetHeight(), 30),
          logger.get());
     assert(*w);
     r = std::make_unique<Reader>("/tmp/check-shmdata",

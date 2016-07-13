@@ -1,7 +1,7 @@
 #include "ofxShmdata.h"
 
 namespace ofxShmdata {
-    string generateVideoMetadata(int width,
+    string generateVideoDescriptor(int width,
         int height,
         int frameRate,
         ofPixelFormat pixelFormat,
@@ -21,11 +21,11 @@ namespace ofxShmdata {
         else {
             ofLogError() << "Pixel type not supported";
         }
-        return generateVideoMetadata(width, height, frameRate, formatType,
+        return generateVideoDescriptor(width, height, frameRate, formatType,
             aspectRatioW, aspectRatioH);
     }
 
-    string generateVideoMetadata(int width,
+    string generateVideoDescriptor(int width,
         int height,
         int frameRate,
         string formatType,
