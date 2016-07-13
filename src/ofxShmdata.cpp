@@ -77,7 +77,7 @@ namespace ofxShmdata {
 
         ofSetFrameRate(frameRate);
 
-        logger = make_unique<shmdata::ConsoleLogger>();
+        logger = make_unique<ShmdataLogger>();
 
         writer = make_unique<shmdata::Writer>("/tmp/" + name,
              width * height * 3,
@@ -109,7 +109,7 @@ namespace ofxShmdata {
     {
         name = _name;
 
-        logger = make_unique<shmdata::ConsoleLogger>();
+        logger = make_unique<ShmdataLogger>();
         reader = std::make_unique<shmdata::Reader>("/tmp/" + name,
             [&](void *data, size_t size){
                 frame.setFromPixels((unsigned char*)data, width, height, OF_IMAGE_COLOR);
