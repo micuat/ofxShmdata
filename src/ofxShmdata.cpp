@@ -40,6 +40,15 @@ namespace ofxShmdata {
             ofToString(aspectRatioW) + "/" + ofToString(aspectRatioH);
     }
 
+    // write screen shot to buffer
+    // result will be vertically fliped
+    // usage:
+    // {
+    //     ofBufferObject buffer;
+    //     ofxShmdata::writeScreenToBuffer(buffer);
+    //     unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
+    //     w->copy_to_shm(p, ofGetWidth() * ofGetHeight() * 3);
+    // }
     void writeScreenToBuffer(ofBufferObject& buffer)
     {
         int numChannels = 3;
@@ -55,5 +64,42 @@ namespace ofxShmdata {
     	glReadPixels(x, y, ofGetWidth(), ofGetHeight(), GL_RGB, GL_UNSIGNED_BYTE, 0);
     	buffer.unbind(GL_PIXEL_PACK_BUFFER);
     	buffer.unmap();
+    }
+
+    void ShmWriter::setup(string _name, int _width, int _height, int _frameRate)
+    {
+        name = _name;
+        width = _width;
+        height = _height;
+        frameRate = _frameRate;
+
+        ofSetFrameRate(frameRate);
+
+        logger = make_unique<shmdata::ConsoleLogger>();
+
+        writer = make_unique<shmdata::Writer>("/tmp/" + name,
+             width * height * 3,
+             generateVideoDescriptor(width, height, frameRate),
+             logger.get());
+        assert(*w);
+
+        screenFbo.allocate(width, height, GL_RGB);
+        screenPixels.allocate(width, height, OF_IMAGE_COLOR);
+    }
+
+    void ShmWriter::publishScreenBegin()
+    {
+        screenFbo.begin();
+    }
+
+    void ShmWriter::publishScreenEnd(bool drawOnScreen)
+    {
+        screenFbo.end();
+        screenFbo.readToPixels(screenPixels);
+        writer->copy_to_shm(screenPixels.getData(), width * height * 3);
+
+        if(drawOnScreen) {
+            screenFbo.draw(0, 0, ofGetWidth(), ofGetHeight());
+        }
     }
 }

@@ -21,4 +21,22 @@ namespace ofxShmdata {
         int aspectRatioH = 1);
 
     void writeScreenToBuffer(ofBufferObject&);
+
+    class ShmWriter{
+    public:
+        ShmWriter() {}
+        void setup(string _name, int _width, int _height, int _frameRate = 30);
+        void publishScreenBegin();
+        void publishScreenEnd(bool drawOnScreen = true);
+        // void publishBuffer(...);
+    private:
+        unique_ptr<shmdata::ConsoleLogger> logger;
+    	unique_ptr<shmdata::Writer> writer;
+        ofFbo screenFbo;
+        ofPixels screenPixels;
+        int width;
+        int height;
+        int frameRate;
+        string name;
+    };
 }

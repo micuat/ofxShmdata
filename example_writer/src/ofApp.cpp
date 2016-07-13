@@ -5,14 +5,7 @@ using namespace shmdata;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetFrameRate(30);
-    logger = make_unique<ConsoleLogger>();
-    // direct access writer with one reader
-    w = make_unique<Writer>("/tmp/ofxShmdata-example",
-         ofGetWidth() * ofGetHeight() * 3,
-         ofxShmdata::generateVideoDescriptor(ofGetWidth(), ofGetHeight(), 30),
-         logger.get());
-    assert(*w);
+    shmWriter.setup("ofxShmdata-example", 640, 480);
 }
 
 //--------------------------------------------------------------
@@ -22,19 +15,15 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    shmWriter.publishScreenBegin();
     cam.begin();
     ofBackground(50, 0, 0);
     ofSetColor(0, 200, 0);
     ofNoFill();
     ofDrawBox(100);
     cam.end();
+    shmWriter.publishScreenEnd();
 
-    {
-        ofBufferObject buffer;
-        ofxShmdata::writeScreenToBuffer(buffer);
-    	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
-        w->copy_to_shm(p, ofGetWidth() * ofGetHeight() * 3);
-    }
     ofSetColor(255);
     ofDrawBitmapString("Shmdata Writer Example", 20, 50);
 }

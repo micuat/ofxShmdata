@@ -22,8 +22,7 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	unique_ptr<shmdata::ConsoleLogger> logger;
-	unique_ptr<shmdata::Writer> w;
+	ofxShmdata::ShmWriter shmWriter;
 
 	ofEasyCam cam;
 };
