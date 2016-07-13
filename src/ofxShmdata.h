@@ -42,17 +42,18 @@ namespace ofxShmdata {
 
     class ShmReader{
     public:
-        ShmReader() : imageTextureDirty(true) {}
-        void setup(string _name, int _width, int _height);
+        ShmReader() : imageTextureDirty(true), connected(false) {}
+        void setup(string _name);
         void draw();
-        // void publishBuffer(...);
-    private:
+    //private:
         unique_ptr<shmdata::ConsoleLogger> logger;
     	unique_ptr<shmdata::Reader> reader;
     	ofImage frame;
         int width;
         int height;
         string name;
+        int channels;
         bool imageTextureDirty;
+        bool connected;
     };
 }

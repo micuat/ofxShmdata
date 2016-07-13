@@ -1,5 +1,7 @@
 #include "ofxShmdata.h"
 
+#include <regex>
+
 namespace ofxShmdata {
     string generateVideoDescriptor(int width,
         int height,
@@ -103,29 +105,95 @@ namespace ofxShmdata {
         }
     }
 
-    void ShmReader::setup(string _name, int _width, int _height)
+    void ShmReader::setup(string _name)
     {
         name = _name;
-        width = _width;
-        height = _height;
 
         logger = make_unique<shmdata::ConsoleLogger>();
-
         reader = std::make_unique<shmdata::Reader>("/tmp/" + name,
             [&](void *data, size_t size){
                 frame.setFromPixels((unsigned char*)data, width, height, OF_IMAGE_COLOR);
                 imageTextureDirty = true;
                 //ofLogVerbose() << "received " << size << " bytes";
             },
-            nullptr,
+            [&](const string& desc){
+                // regex from https://github.com/sat-metalab/switcher/blob/master/plugins/posture/posture_colorizeGL.cpp
+                auto removeExtraParenthesis = [](string& str) {
+                    if (str.find(")") == 0) str = str.substr(1);
+                };
+                regex regHap, regWidth, regHeight;
+                regex regVideo, regFormat;
+                try {
+                    regVideo = regex("(.*video/x-raw)(.*)", regex_constants::extended);
+                    regFormat = regex("(.*format=\\(string\\))(.*)", regex_constants::extended);
+                    regWidth = regex("(.*width=\\(int\\))(.*)", regex_constants::extended);
+                    regHeight = regex("(.*height=\\(int\\))(.*)", regex_constants::extended);
+                } catch (const regex_error& e) {
+                    cout << "ShmReader::" << __FUNCTION__ << " - Regex error code: " << e.code() << endl;
+                    return false;
+                }
+
+                smatch match;
+                string substr, format;
+
+                if (regex_match(desc, regVideo)) {
+                    if (regex_match(desc, match, regFormat)) {
+                        ssub_match subMatch = match[2];
+                        substr = subMatch.str();
+                        removeExtraParenthesis(substr);
+                        substr = substr.substr(0, substr.find(","));
+
+                        if ("RGB" == substr) {
+                            channels = 3;
+                        } else if ("BGR" == substr) {
+                            channels = 3;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    if (regex_match(desc, match, regWidth)) {
+                        ssub_match subMatch = match[2];
+                        substr = subMatch.str();
+                        removeExtraParenthesis(substr);
+                        substr = substr.substr(0, substr.find(","));
+                        width = stoi(substr);
+                    } else {
+                        return false;
+                    }
+
+                    if (regex_match(desc, match, regHeight)) {
+                        ssub_match subMatch = match[2];
+                        substr = subMatch.str();
+                        removeExtraParenthesis(substr);
+                        substr = substr.substr(0, substr.find(","));
+                        height = stoi(substr);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+
+                connected = true;
+                return true;
+            },
             nullptr,
             logger.get());
-        frame.allocate(width, height, OF_IMAGE_COLOR);
         assert(*r);
     }
 
     void ShmReader::draw()
     {
+        if(!connected)
+            return;
+
+        // for some reason, allocate(...) won't work when called in a callback
+        if(frame.isAllocated() == false) {
+            frame.allocate(width, height, OF_IMAGE_COLOR);
+            return;
+        }
+
         if(imageTextureDirty) {
             frame.update();
             imageTextureDirty = false;

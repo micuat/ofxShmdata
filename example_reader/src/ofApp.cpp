@@ -6,7 +6,7 @@ using namespace shmdata;
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(30);
-    shmReader.setup("ofxShmdata-example", 640, 480);
+    shmReader.setup("ofxShmdata-example");
 }
 
 //--------------------------------------------------------------
@@ -64,7 +64,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    ofSetWindowShape(640, 480);
+
 }
 
 //--------------------------------------------------------------
