@@ -1,10 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-
-#include "shmdata/writer.hpp"
-#include "shmdata/reader.hpp"
-#include "shmdata/console-logger.hpp"
+#include "ofxShmdata.h"
 
 const int frameWidth = 640;
 const int frameHeight = 480;
