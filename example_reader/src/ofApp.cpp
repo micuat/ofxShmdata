@@ -7,23 +7,15 @@ using namespace shmdata;
 void ofApp::setup(){
     ofSetFrameRate(30);
     logger = make_unique<ConsoleLogger>();
-    // direct access writer with one reader
-    w = make_unique<Writer>("/tmp/ofxShmdata-example",
-         ofGetWidth() * ofGetHeight() * 3,
-         ofxShmdata::generateVideoDescriptor(ofGetWidth(), ofGetHeight(), 30),
-         logger.get());
-    assert(*w);
-    r = std::make_unique<Reader>("/tmp/check-shmdata",
-         [](void *data, size_t size){
-           //auto frame = static_cast<Frame *>(data);
-           std::cout << "(direct access) new data for client "
-                     //<< frame->count
-                     << " (size " << size << ")"
-                     << std::endl;
-         },
-         nullptr,
-         nullptr,
-         logger.get());
+    r = std::make_unique<Reader>("/tmp/ofxShmdata-example",
+        [&](void *data, size_t size){
+            frame.setFromPixels((unsigned char*)data, 640, 480, OF_IMAGE_COLOR);
+            //ofLogError() << "received " << size << " bytes";
+        },
+        nullptr,
+        nullptr,
+        logger.get());
+    frame.allocate(640, 480, OF_IMAGE_COLOR);
     assert(*r);
 }
 
@@ -34,23 +26,11 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    cam.begin();
-    ofBackground(50, 0, 0);
-    ofSetColor(0, 200, 0);
-    ofNoFill();
-    ofDrawBox(100);
-    cam.end();
-
-    {
-        ofBufferObject buffer;
-        ofxShmdata::writeScreenToBuffer(buffer);
-    	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
-        w->copy_to_shm(p, ofGetWidth() * ofGetHeight() * 3);
-
-    	buffer.unmap();
-    }
+    ofBackground(0);
     ofSetColor(255);
-    ofDrawBitmapString("Shmdata Writer Example", 20, 50);
+    frame.update(); // should be updated here, not in the callback
+    frame.draw(0, 0, 640, 480);
+    ofDrawBitmapString("Shmdata Reader Example", 20, 50);
 }
 
 //--------------------------------------------------------------
