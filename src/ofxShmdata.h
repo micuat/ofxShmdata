@@ -39,4 +39,20 @@ namespace ofxShmdata {
         int frameRate;
         string name;
     };
+
+    class ShmReader{
+    public:
+        ShmReader() : imageTextureDirty(true) {}
+        void setup(string _name, int _width, int _height);
+        void draw();
+        // void publishBuffer(...);
+    private:
+        unique_ptr<shmdata::ConsoleLogger> logger;
+    	unique_ptr<shmdata::Reader> reader;
+    	ofImage frame;
+        int width;
+        int height;
+        string name;
+        bool imageTextureDirty;
+    };
 }

@@ -102,4 +102,34 @@ namespace ofxShmdata {
             screenFbo.draw(0, 0, ofGetWidth(), ofGetHeight());
         }
     }
+
+    void ShmReader::setup(string _name, int _width, int _height)
+    {
+        name = _name;
+        width = _width;
+        height = _height;
+
+        logger = make_unique<shmdata::ConsoleLogger>();
+
+        reader = std::make_unique<shmdata::Reader>("/tmp/" + name,
+            [&](void *data, size_t size){
+                frame.setFromPixels((unsigned char*)data, width, height, OF_IMAGE_COLOR);
+                imageTextureDirty = true;
+                //ofLogVerbose() << "received " << size << " bytes";
+            },
+            nullptr,
+            nullptr,
+            logger.get());
+        frame.allocate(width, height, OF_IMAGE_COLOR);
+        assert(*r);
+    }
+
+    void ShmReader::draw()
+    {
+        if(imageTextureDirty) {
+            frame.update();
+            imageTextureDirty = false;
+        }
+        frame.draw(0, 0);
+    }
 }

@@ -6,17 +6,7 @@ using namespace shmdata;
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(30);
-    logger = make_unique<ConsoleLogger>();
-    r = std::make_unique<Reader>("/tmp/ofxShmdata-example",
-        [&](void *data, size_t size){
-            frame.setFromPixels((unsigned char*)data, 640, 480, OF_IMAGE_COLOR);
-            //ofLogError() << "received " << size << " bytes";
-        },
-        nullptr,
-        nullptr,
-        logger.get());
-    frame.allocate(640, 480, OF_IMAGE_COLOR);
-    assert(*r);
+    shmReader.setup("ofxShmdata-example", 640, 480);
 }
 
 //--------------------------------------------------------------
@@ -28,8 +18,7 @@ void ofApp::update(){
 void ofApp::draw(){
     ofBackground(0);
     ofSetColor(255);
-    frame.update(); // should be updated here, not in the callback
-    frame.draw(0, 0, 640, 480);
+    shmReader.draw();
     ofDrawBitmapString("Shmdata Reader Example", 20, 50);
 }
 

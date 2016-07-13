@@ -22,7 +22,5 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	unique_ptr<shmdata::ConsoleLogger> logger;
-	unique_ptr<shmdata::Reader> r;
-	ofImage frame;
+	ofxShmdata::ShmReader shmReader;
 };
