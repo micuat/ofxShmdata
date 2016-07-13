@@ -10,9 +10,7 @@ void ofApp::setup(){
     // direct access writer with one reader
     w = make_unique<Writer>("/tmp/check-shmdata",
          frameSize,
-         "video/x-raw, format=(string)RGB, width=(int)" + ofToString(frameWidth) +
-         ", height=(int)" + ofToString(frameHeight) +
-         ", framerate=(fraction)30/1, pixel-aspect-ratio=(fraction)1/1",
+         ofxShmdata::generateVideoMetadata(frameWidth, frameHeight, 30),
          logger.get());
     assert(*w);
     r = std::make_unique<Reader>("/tmp/check-shmdata",
@@ -20,7 +18,8 @@ void ofApp::setup(){
            //auto frame = static_cast<Frame *>(data);
            std::cout << "(direct access) new data for client "
                      //<< frame->count
-                     << " (size " << size << ")"                      << std::endl;
+                     << " (size " << size << ")"
+                     << std::endl;
          },
          nullptr,
          nullptr,
