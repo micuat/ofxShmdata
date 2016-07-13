@@ -1,8 +1,8 @@
 #include "ofMain.h"
 
-#include "shmdata/writer.hpp"
-#include "shmdata/reader.hpp"
-#include "shmdata/console-logger.hpp"
+#include <shmdata/writer.hpp>
+#include <shmdata/reader.hpp>
+#include <shmdata/abstract-logger.hpp>
 
 namespace ofxShmdata {
     // Returns formatted descriptor string to initialize Writer
@@ -21,6 +21,16 @@ namespace ofxShmdata {
         int aspectRatioH = 1);
 
     void writeScreenToBuffer(ofBufferObject&);
+
+    class ShmdataLogger : public shmdata::AbstractLogger {
+    private:
+         void on_error(std::string&& str) final { ofLog(OF_LOG_ERROR, str.c_str()); }
+         void on_critical(std::string&& str) final { ofLog(OF_LOG_FATAL_ERROR, str.c_str()); }
+         void on_warning(std::string&& str) final { ofLog(OF_LOG_WARNING, str.c_str()); }
+         void on_message(std::string&& str) final { ofLog(OF_LOG_NOTICE, str.c_str()); }
+         void on_info(std::string&& str) final { ofLog(OF_LOG_NOTICE, str.c_str()); }
+         void on_debug(std::string&& str) final { ofLog(OF_LOG_VERBOSE, str.c_str()); }
+    };
 
     class ShmWriter{
     public:
