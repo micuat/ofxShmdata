@@ -24,7 +24,6 @@ public:
 
 	unique_ptr<shmdata::ConsoleLogger> logger;
 	unique_ptr<shmdata::Writer> w;
-	unique_ptr<shmdata::Reader> r;
 
 	ofEasyCam cam;
 };

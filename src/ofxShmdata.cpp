@@ -54,5 +54,6 @@ namespace ofxShmdata {
     	buffer.bind(GL_PIXEL_PACK_BUFFER);
     	glReadPixels(x, y, ofGetWidth(), ofGetHeight(), GL_RGB, GL_UNSIGNED_BYTE, 0);
     	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+    	buffer.unmap();
     }
 }

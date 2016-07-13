@@ -13,18 +13,6 @@ void ofApp::setup(){
          ofxShmdata::generateVideoDescriptor(ofGetWidth(), ofGetHeight(), 30),
          logger.get());
     assert(*w);
-    r = std::make_unique<Reader>("/tmp/check-shmdata",
-         [](void *data, size_t size){
-           //auto frame = static_cast<Frame *>(data);
-           std::cout << "(direct access) new data for client "
-                     //<< frame->count
-                     << " (size " << size << ")"
-                     << std::endl;
-         },
-         nullptr,
-         nullptr,
-         logger.get());
-    assert(*r);
 }
 
 //--------------------------------------------------------------
@@ -46,8 +34,6 @@ void ofApp::draw(){
         ofxShmdata::writeScreenToBuffer(buffer);
     	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
         w->copy_to_shm(p, ofGetWidth() * ofGetHeight() * 3);
-
-    	buffer.unmap();
     }
     ofSetColor(255);
     ofDrawBitmapString("Shmdata Writer Example", 20, 50);
