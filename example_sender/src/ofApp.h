@@ -3,9 +3,6 @@
 #include "ofMain.h"
 #include "ofxShmdata.h"
 
-const int frameWidth = 640;
-const int frameHeight = 480;
-
 class ofApp : public ofBaseApp{
 
 public:
@@ -30,6 +27,4 @@ public:
 	unique_ptr<shmdata::Reader> r;
 
 	ofEasyCam cam;
-
-	const int frameSize = frameWidth * frameHeight * 3;
 };

@@ -8,9 +8,9 @@ void ofApp::setup(){
     ofSetFrameRate(30);
     logger = make_unique<ConsoleLogger>();
     // direct access writer with one reader
-    w = make_unique<Writer>("/tmp/check-shmdata",
-         frameSize,
-         ofxShmdata::generateVideoMetadata(frameWidth, frameHeight, 30),
+    w = make_unique<Writer>("/tmp/ofxShmdata-example",
+         ofGetWidth() * ofGetHeight() * 3,
+         ofxShmdata::generateVideoMetadata(ofGetWidth(), ofGetHeight(), 30),
          logger.get());
     assert(*w);
     r = std::make_unique<Reader>("/tmp/check-shmdata",
@@ -45,7 +45,7 @@ void ofApp::draw(){
         ofBufferObject buffer;
         ofxShmdata::writeScreenToBuffer(buffer);
     	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
-        w->copy_to_shm(p, frameSize);
+        w->copy_to_shm(p, ofGetWidth() * ofGetHeight() * 3);
 
     	buffer.unmap();
     }
@@ -93,7 +93,7 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    ofSetWindowShape(640, 480);
 }
 
 //--------------------------------------------------------------
